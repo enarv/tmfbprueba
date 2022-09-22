@@ -4,7 +4,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title>
-			Detalle Pelicula
+			Cast Details
 		</title>
 		<link rel="stylesheet" href="https://www.markuptag.com/bootstrap/5/css/bootstrap.min.css">
 		<!-- ENLAZAR VUE JS -->
@@ -75,80 +75,58 @@
 						</div>
 					</div>
 				</nav>
-			</div>
-			<div v-if="movie!=null">
-				
-				<div class="row bg-dark text-light">
-					<div class="col">
-						<img :src="`https://image.tmdb.org/t/p/w300/${movie.poster_path}`" class="img-fluid" /> 
-					</div>
-					<div class="col">
-						<div>
-							<p class="fs-1 fw-bold">{{ movie.title }}</p>
-							<p class="fs-4 fs-4  fw-bold">Voto Promedio</p>	
-							<p>{{round(movie.vote_average,1)}}</p>
-						</div>
-						<div v-if="mov_genres!=null">
-							<p class="fs-4 fs-4 fw-bold">Generos</p>	
-							<div class="row justify-content-md-center">
-								<div v-for="g in mov_genres ">
-									<div class="col">
-										{{g.name}}
-									</div>												
-								</div>
-							</div>		
-										
-							</div>
-							<br>				
-							<div v-if="movie!=null">
-								<p class="fs-4 fs-4 fw-bold">Reseña</p>	
-								{{movie.overview}}
-							</div>
-						</div>
-					</div>
-				</div>
+			</div> 
+			<div v-if="cast!=null">	
+                <div class="row bg-dark text-light">
+                    <div class="col">
+                        <img :src="`https://image.tmdb.org/t/p/w300/${cast.profile_path}`" class="img-fluid" /> 
+                    </div>
+                    <div class="col">
+                        <div>
+                            <p class="fs-1 fw-bold">{{ cast.name}}</p>
+                            <p class="fs-4 fs-4  fw-bold">Voto Promedio</p>	
+                            <p>{{cast.biography}}</p>
+                        </div>
+                        <div v-if="mov_genres!=null">
+                            <p class="fs-4 fs-4 fw-bold">Generos</p>	
+                            <div class="row justify-content-md-center">
+                                <!-- <div v-for="g in mov_genres ">
+                                    <div class="col">
+                                        {{g.name}}
+                                    </div>												
+                                </div> -->
+                            </div>		
+                                    
+                        </div>
+                        <br>				
+                        <div v-if="movie!=null">
+                            <p class="fs-4 fs-4 fw-bold">Reseña</p>	
+                            {{movie.overview}}
+                        </div>
+                    </div>
+                </div>
+			</div> 
 				
 					
 
 				<!-- todo cast -->
-				<div class="container-fluid py-2">
+				<!--<div class="container-fluid py-2">
 					<h2 class="font-weight-light font-monospace"> Reparto Pelicula</h2>
 					<div class="d-flex flex-row flex-nowrap overflow-auto scroll" >
-						<div class="card card-body bg-dark" v-for="c in cast">
+						<div class="card card-body bg-dark" v-if="cast!=null" >
 							
-							<img :src="`https://image.tmdb.org/t/p/w300/${c.profile_path}`"  />
-							<p class="text-light font-monospace text-center" >
-								{{ c.name }}
-							</p>
-							<a class="text-center font-monospace text-decoration-none" :href="`cast_details.html?credits=${c.id}-${getSlug(c.name)}`">
-								Ver más
-							</a>
-						</div>
-					</div>
-				</div>
-
-				<div class="container-fluid py-2">
-					<h2 class="font-weight-light font-monospace"> Trailers</h2>
-					<div class="d-flex flex-row flex-nowrap overflow-auto scroll" >
-						<div class=" bg-dark" v-for="v in videos">
-							<!-- <h1 class="text-light">
-								{{v.key}}po
-							</h1> -->
-							<iframe width="450" height="315"
-								:src="`https://www.youtube.com/embed/${v.key}`" >
-							</iframe>
-							<!-- <img :src="`https://image.tmdb.org/t/p/w300/${c.profile_path}`"  />
+							<img :src="`https://image.tmdb.org/t/p/w300/${cast.profile_path}`"  />
 							<p class="text-light font-monospace" >
-								{{ c.name }}
+								{{ cast.name }}
 							</p>
-							<a class="text-center font-monospace text-decoration-none" :href="`cast_details.html?credits=${c.id}-${getSlug(c.name)}`">
+							 <a class="text-center font-monospace text-decoration-none" :href="`cast_details.html?movie=${p.id}-${getSlug(p.title)}`">
 								Ver más
-							</a> -->
+							</a> 
 						</div>
 					</div>
-				</div>
-			</div> 
-		</div>
+				</div>-->
+
+		</div> 
 		<footer id="footerpad">
 			<div class="container">
 				<div class="row">
@@ -168,11 +146,9 @@
 				data(){
 					return {
 						movie:null,
-						movie_id:0,
+						cast_id:0,
 						cast:null,
-						mov_genres:[],
-						videos:[]
-						
+						mov_genres:[]
 					}
 				},
 				methods: {
@@ -193,80 +169,67 @@
 					let word = myArray[myArray.length-1];
 					console.log(word)
 
-					var ret = word.replace('mov_details.html?movie=','');
+					var ret = word.replace('cast_details.html?credits=','');
 					console.log(ret)
 					const myArray2 = ret.split("-");
 
 					let id = myArray2[0];
-					this.movie_id = id;
-					console.log(this.movie_id);
+					this.cast_id = id;
+					console.log(this.cast_id);
 					
 					var config = {
 					  method: 'get',
-					  url: 'https://api.themoviedb.org/3/movie/'+this.movie_id+'?api_key=af74a3fa129f538a11a2385781f13edc&language=en-US',
+					  url: 'https://api.themoviedb.org/3/person/'+this.cast_id+'?api_key=af74a3fa129f538a11a2385781f13edc&language=en-US',
 					  headers: { }
 					};
 
 					axios(config)
 					.then(function (response) {
 					  console.log(JSON.stringify(response.data));
-					  app.movie  = response.data
+					  app.cast  = response.data
 					})
 					.catch(function (error) {
 					  console.log(error);
 					});
 
 
-					var config = {
-					method: 'get',
-					url: 'https://api.themoviedb.org/3/movie/'+this.movie_id+'/credits?api_key=af74a3fa129f538a11a2385781f13edc&language=en-US',
-					headers: {
-						'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYjYxNGFmMDA4YWZjMGQyMGM3ZGY0Mjk0OTkyZGIxZSIsInN1YiI6IjYzMWE3ZjE5MGZiMzk4MDA4NGM5ZGZlZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.OikVCk2EOnY8oQs6XJO7q24HzgL5pPy1fp_f1Xrzsk8'
-					 }
-					};
+					// var config = {
+					// method: 'get',
+					// url: 'https://api.themoviedb.org/3/movie/'+this.movie_id+'/credits?api_key=af74a3fa129f538a11a2385781f13edc&language=en-US',
+					// headers: {
+					// 	'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYjYxNGFmMDA4YWZjMGQyMGM3ZGY0Mjk0OTkyZGIxZSIsInN1YiI6IjYzMWE3ZjE5MGZiMzk4MDA4NGM5ZGZlZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.OikVCk2EOnY8oQs6XJO7q24HzgL5pPy1fp_f1Xrzsk8'
+					//  }
+					// };
 
-					axios(config)
-					.then(function (response) {
-					//console.log(JSON.stringify(response.data.cast));
-					app.cast=response.data.cast
-					console.log(JSON.stringify(response.data.cast))
-					})
-					.catch(function (error) {
-					console.log(error);
-					});
+					// axios(config)
+					// .then(function (response) {
+					// //console.log(JSON.stringify(response.data.cast));
+					// app.cast=response.data.cast
+					// //console.log(app.cast)
+					// })
+					// .catch(function (error) {
+					// console.log(error);
+					// });
 
-					var config = {
-					  method: 'get',
-					  url: 'https://api.themoviedb.org/3/movie/'+this.movie_id+'?api_key=af74a3fa129f538a11a2385781f13edc&language=en-US',
-					  headers: { }
-					};
 
-					//videos
-					axios(config)
-					.then(function (response) {
-					  console.log(JSON.stringify(response.data.genres));
-					  app.mov_genres  = response.data.genres
-					})
-					.catch(function (error) {
-					  console.log(error);
-					});
+					// var config = {
+					//   method: 'get',
+					//   url: 'https://api.themoviedb.org/3/movie/'+this.movie_id+'?api_key=af74a3fa129f538a11a2385781f13edc&language=en-US',
+					//   headers: { }
+					// };
 
-					var config = {
-						method: 'get',
-						url: 'https://api.themoviedb.org/3/movie/'+this.movie_id+'/videos?language=en-US',
-						headers: { 
-							'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYjYxNGFmMDA4YWZjMGQyMGM3ZGY0Mjk0OTkyZGIxZSIsInN1YiI6IjYzMWE3ZjE5MGZiMzk4MDA4NGM5ZGZlZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.OikVCk2EOnY8oQs6XJO7q24HzgL5pPy1fp_f1Xrzsk8'
-						}
-					};
+					// axios(config)
+					// .then(function (response) {
+					//   console.log(JSON.stringify(response.data.genres));
+					//   app.mov_genres  = response.data.genres
+					// })
+					// .catch(function (error) {
+					//   console.log(error);
+					// });
 
-					axios(config)
-					.then(function (response) {
-						console.log(JSON.stringify(response.data.results));
-						app.videos  = response.data.results;
-					})
-					.catch(function (error) {
-						console.log(error);
-					});
+
+					
+
 				}
 			}).mount('#contenedor')
 		</script>

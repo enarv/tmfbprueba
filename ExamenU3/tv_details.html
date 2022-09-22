@@ -7,25 +7,101 @@
 			Series
 		</title>
 		<!-- ENLAZAR VUE JS -->
+		<link rel="stylesheet" href="https://www.markuptag.com/bootstrap/5/css/bootstrap.min.css">
+		<!-- ENLAZAR VUE JS -->
 		<script src="https://unpkg.com/vue@3"></script>
 		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<title>Untitled</title>
+		<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700">
+		<link rel="stylesheet" href="assets/css/Footer-with-social-media-icons.css">
+		<link rel="stylesheet" href="assets/css/Pages-Navbar.css">
 		<style>
+			h1{
+				text-align: center;
+			}
+			.hero-banner{
+				background-color: #2650db;
+			}
+			.hero-banner h1 {
+				font-size: 48px;
+				color: white;
+			}
+			.hero-banner p {
+				color: white;
+				font-size: 30;
+			}
+			.navbar .navbar-brand {
+				color: white;
+				
+			}
+			.navbar .nav-item .nav-link {
+				color: black;
+				border-radius: 5px;
+			}
+			.card-body {
+				min-height: 300px;
+				min-width: 250px;
+				margin-right: 5px;
+			}
+			table, th, td {
+			  border: 1px solid black;
+			}
+			.serie{
+				border: 1px solid black;
+				min-height: 150px; 
+				background-color: #4ED3C5; 
+			}
 			
 		</style>	
+		
 	</head>
 	<body>
 		<!-- CREAR UN CONTENEDOR -->
 		<div id="contenedor">	
-			<div v-if="tv!=null">
-				
-				<h1>
-					{{ tv.name }}
-				</h1>
-
-				<img :src="`https://image.tmdb.org/t/p/w300/${tv.poster_path}`" /> 
-            </div>
+			<div class="container-fluid" style="padding: 0px;">
+				<nav class="navbar navbar-light navbar-expand-md sticky-top navigation-clean white-links" style="background: rgba(42, 87, 107, 1); color: white;">
+					<div class="container"><a class="navbar-brand" id="company-name" href="home.html">TMDB UABCS</a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1" onclick="SetNavBackground();"><span class="visually-hidden">Toggle navigation</span><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" style="color: white;font-size: 30px;">
+								<path d="M2 6C2 5.44772 2.44772 5 3 5H21C21.5523 5 22 5.44772 22 6C22 6.55228 21.5523 7 21 7H3C2.44772 7 2 6.55228 2 6Z" fill="currentColor"></path>
+								<path d="M2 12.0322C2 11.4799 2.44772 11.0322 3 11.0322H21C21.5523 11.0322 22 11.4799 22 12.0322C22 12.5845 21.5523 13.0322 21 13.0322H3C2.44772 13.0322 2 12.5845 2 12.0322Z" fill="currentColor"></path>
+								<path d="M3 17.0645C2.44772 17.0645 2 17.5122 2 18.0645C2 18.6167 2.44772 19.0645 3 19.0645H21C21.5523 19.0645 22 18.6167 22 18.0645C22 17.5122 21.5523 17.0645 21 17.0645H3Z" fill="currentColor"></path>
+							</svg></button>
+						<div class="collapse navbar-collapse" id="navcol-1">
+							<ul class="navbar-nav ms-auto">
+								<li class="nav-item"><a class="nav-link" href="#">Peliculas</a></li>
+								<li class="nav-item"><a class="nav-link" href="#">Series</a></li>
+								<li class="nav-item"><a class="nav-link" href="#">Actores</a></li>
+								<li class="nav-item"><a class="btn btn-info move-left-xs-sm-md me-md-3 mb-3 mb-md-0" role="button" href="login.html">Cerrar sesión</a></li>
+							</ul>
+						</div>
+					</div>
+				</nav>
 		</div> 
+		<div v-if="tv!=null">
+				
+			<h1>
+				{{ tv.name }}
+			</h1>
+
+			<img :src="`https://image.tmdb.org/t/p/w300/${tv.poster_path}`" /> 
+		</div>
+        <!-- todo cast -->
+				<div class="container-fluid py-2">
+					<h2 class="font-weight-light font-monospace"> Reparto Serie</h2>
+					<div class="d-flex flex-row flex-nowrap overflow-auto scroll" >
+						<div class="card card-body bg-dark" v-for="c in cast">
+							
+							<img :src="`https://image.tmdb.org/t/p/w300/${c.profile_path}`"  />
+							<p class="text-light font-monospace text-center" >
+								{{ c.name }}
+							</p>
+							<a class="text-center font-monospace text-decoration-none" :href="`cast_details.html?credits=${c.id}-${getSlug(c.name)}`">
+								Ver más
+							</a> 
+						</div>
+					</div>
+				</div>
 
 		<script type="text/javascript">
 			// vincular vue con mi contenedor
@@ -35,7 +111,10 @@
 				data(){
 					return {
 						tv:null,
-						tv_id:0
+						tv_id:0,
+						cast:null,
+						tv_genres:[]
+
 					}
 				},
 				methods: {
@@ -61,7 +140,7 @@
 					
 					var config = {
 					  method: 'get',
-					  url: 'https://api.themoviedb.org/3/tv/'+this.tv_id+'?api_key=af74a3fa129f538a11a2385781f13edc&language=es-ES',
+					  url: 'https://api.themoviedb.org/3/tv/'+this.tv_id +'?api_key=29a3adade8be16bb05f9b2b981c3c54a',
 					  headers: { }
 					};
 
@@ -74,30 +153,32 @@
 					  console.log(error);
 					});
 
+                    var config = {
+					method: 'get',
+					url: 'https://api.themoviedb.org/3/tv/'+this.tv_id+'/credits?api_key=af74a3fa129f538a11a2385781f13edc&language=en-US',
+					headers: {
+						'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYjYxNGFmMDA4YWZjMGQyMGM3ZGY0Mjk0OTkyZGIxZSIsInN1YiI6IjYzMWE3ZjE5MGZiMzk4MDA4NGM5ZGZlZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.OikVCk2EOnY8oQs6XJO7q24HzgL5pPy1fp_f1Xrzsk8'
+					 }
+					};
 
-					// var config = {
-					//   method: 'get',
-					//   url: 'https://api.themoviedb.org/3/movie/popular?api_key=af74a3fa129f538a11a2385781f13edc&language=en-US',
-					//   headers: { }
-					// };
+					axios(config)
+					.then(function (response) {
+					//console.log(JSON.stringify(response.data.cast));
+					app.cast=response.data.cast
+					console.log(app.cast)
+					})
+					.catch(function (error) {
+					console.log(error);
+					});
 
-					// axios(config)
-					// .then(function (response) {
-					//   //console.log(JSON.stringify(response.data));
-					//   app.movies = response.data.results;
-					//   console.log(movies)
-					  
-					// })
-					// .catch(function (error) {
-					//   console.log(error);
-					// });
 
-					// fetch('data/users.json')
-					//   .then((res) => res.json())
-					//   .then((json) => ( this.users = json ))
-					//   .catch((err) => ( console.log(err) ))
+
+
+					
 				}
 			}).mount('#contenedor')
 		</script>
+		<script src="https://www.markuptag.com/bootstrap/5/js/bootstrap.bundle.min.js"></script>
+		
 	</body>
 </html>
