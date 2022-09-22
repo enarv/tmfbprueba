@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>
+			Home
+		</title>
+		<link rel="stylesheet" href="https://www.markuptag.com/bootstrap/5/css/bootstrap.min.css">
+		<!-- ENLAZAR VUE JS -->
+		<script src="https://unpkg.com/vue@3"></script>
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<style>
+			.hero-banner{
+				background-color: #2650db;
+			}
+			.hero-banner h1 {
+				font-size: 48px;
+				color: white;
+			}
+			.hero-banner p {
+				color: white;
+				font-size: 30;
+			}
+			.navbar .navbar-brand {
+				color: white;
+				
+			}
+			.navbar .nav-item .nav-link {
+				color: black;
+				border-radius: 5px;
+			}
+			.card-body {
+				min-height: 300px;
+				min-width: 250px;
+				margin-right: 5px;
+			}
+		</style>	
+	</head>
+	<body>
+		
+		<!-- CREAR UN CONTENEDOR -->
+		<div id="contenedor">
+			<!--Navbar -->
+			<nav class="navbar navbar-expand-lg navbar-light bg-dark fixed-top">
+				<div class="container">
+					<a class="navbar-brand" href="/home.html">FilmDB</a>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+					<div class="collapse navbar-collapse" id="navbarResponsive">
+						<ul class="navbar-nav ms-auto">
+							
+							<li class="nav-item ">
+								<button class="nav-link"  @click="logout(s)">Logout</button>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<!--banner-->
+			<section class="hero-banner py-5">
+				<div class="container">
+					<div class="row row align-items-center">
+						<div class="col-lg-5 offset-lg-1 order-lg-1">
+							<!-- <img src="web-development-vector.png" class="img-fluid" alt="Web Development"> -->
+						</div>
+						<div class="col-lg-6">
+							<h1 class="mt-3">Bienvenido</h1>
+							<p class="lead text-white bg-dark text-secondary my-5">Accede a la informacion de miles de peliculas y series.</p>
+						</div>
+					</div>
+				</div>
+			</section>	
+			<div  >
+				<div class="container-fluid py-2">
+					<h2 class="font-weight-light">Populares</h2>
+					<div class="d-flex flex-row flex-nowrap overflow-auto scroll" >
+						<div class="card card-body" v-for="p in popular_mov">
+							<p>
+								{{ p.title }}
+							</p>
+			
+							<img :src="`https://image.tmdb.org/t/p/w300/${p.poster_path}`"  /> 
+			
+							<a :href="`mov_details.html?movie=${p.id}-${getSlug(p.title)}`">
+								Ver más
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+			<div  >
+				<div class="container-fluid py-2">
+					<h2 class="font-weight-light">Trending</h2>
+					<div class="d-flex flex-row flex-nowrap overflow-auto" >
+						<div class="card card-body" v-for="p in trending_mov">
+							<p v-if="p.media_type=='movie'">
+								{{p.title}}
+							</p>
+							<p v-else="p.media_type='tv'">
+								{{p.name}}
+							</p>
+			
+							<img :src="`https://image.tmdb.org/t/p/w300/${p.poster_path}`"  /> 
+			
+							<a v-if="p.media_type=='movie'" :href="`mov_details.html?movie=${p.id}-${getSlug(p.title)}`">
+								Ver más
+							</a>
+							<a v-else="p.media_type=='tv'" :href="`tv_details.html?tv=${p.id}-${getSlug(p.name)}`">
+								Ver más
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+			<div>
+				<div class="container-fluid py-2">
+					<h2 class="font-weight-light">Series</h2>
+					<div class="d-flex flex-row flex-nowrap overflow-auto" >
+						<div class="card card-body" v-for="p in series">
+							
+							<p>
+								{{p.name}}
+							</p>
+			
+							<img :src="`https://image.tmdb.org/t/p/w300/${p.poster_path}`"  /> 
+			
+							
+							<a  :href="`tv_details.html?tv=${p.id}-${getSlug(p.name)}`">
+								Ver más
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div> 
+
+		<script type="text/javascript">
+			// vincular vue con mi contenedor
+			const { createApp } = Vue;  
+
+			const app = createApp({
+				data(){
+					return {
+						popular_mov:null,
+						free_mov:null,
+						trending_mov:null,
+						series:null
+					}
+				},
+				methods: {
+					getSlug(t){ 
+						return t.replaceAll(' ', '-')
+					},
+					logout(s){
+
+					}
+				},
+				mounted(){ 
+					//populares
+					var config = {
+					  method: 'get',
+					  url: 'https://api.themoviedb.org/3/movie/popular?api_key=af74a3fa129f538a11a2385781f13edc&language=es-ES',
+					  headers: { }
+					};
+
+					axios(config)
+					.then(function (response) {
+					  //console.log(JSON.stringify(response.data));
+					  app.popular_mov = response.data.results;
+					  console.log(popular_mov)
+					  
+					})
+					.catch(function (error) {
+					  console.log(error);
+					});
+
+					//trending
+					var config = {
+					method: 'get',
+					url: 'https://api.themoviedb.org/3/trending/all/day',
+					headers: { 
+						'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYjYxNGFmMDA4YWZjMGQyMGM3ZGY0Mjk0OTkyZGIxZSIsInN1YiI6IjYzMWE3ZjE5MGZiMzk4MDA4NGM5ZGZlZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.OikVCk2EOnY8oQs6XJO7q24HzgL5pPy1fp_f1Xrzsk8'
+					}
+					};
+
+					axios(config)
+					.then(function (response) {
+					app.trending_mov = response.data.results;
+					console.log(app.trending_mov)
+					})
+					.catch(function (error) {
+					console.log(error);
+					});
+
+					//series
+
+					var config = {
+					method: 'get',
+					url: 'https://api.themoviedb.org/3/tv/popular?language=en-US&page=1',
+					headers: { 
+						'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiIwYjYxNGFmMDA4YWZjMGQyMGM3ZGY0Mjk0OTkyZGIxZSIsInN1YiI6IjYzMWE3ZjE5MGZiMzk4MDA4NGM5ZGZlZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.OikVCk2EOnY8oQs6XJO7q24HzgL5pPy1fp_f1Xrzsk8'
+					}
+					};
+
+					axios(config)
+					.then(function (response) {
+					app.series = response.data.results;
+					console.log(app.series);
+					})
+					.catch(function (error) {
+					console.log(error);
+					});
+
+					//ver gratis
+
+				}
+				
+			}).mount('#contenedor')
+		</script>
+		<script src="https://www.markuptag.com/bootstrap/5/js/bootstrap.bundle.min.js"></script>
+	</body>
+</html>

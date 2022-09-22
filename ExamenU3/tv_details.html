@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>
+			Series
+		</title>
+		<!-- ENLAZAR VUE JS -->
+		<script src="https://unpkg.com/vue@3"></script>
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<style>
+			
+		</style>	
+	</head>
+	<body>
+		<!-- CREAR UN CONTENEDOR -->
+		<div id="contenedor">	
+			<div v-if="tv!=null">
+				
+				<h1>
+					{{ tv.name }}
+				</h1>
+
+				<img :src="`https://image.tmdb.org/t/p/w300/${tv.poster_path}`" /> 
+            </div>
+		</div> 
+
+		<script type="text/javascript">
+			// vincular vue con mi contenedor
+			const { createApp } = Vue;  
+
+			const app = createApp({
+				data(){
+					return {
+						tv:null,
+						tv_id:0
+					}
+				},
+				methods: {
+					
+					getSlug(t){ 
+						return t.replaceAll(' ', '-')
+					}
+				},
+				mounted(){ 
+
+					console.log(window.location.href)
+					const myArray = window.location.href.split("/");
+					let word = myArray[myArray.length-1];
+					console.log(word)
+
+					var ret = word.replace('tv_details.html?tv=','');
+					console.log(ret)
+
+					const myArray2 = ret.split("-");
+					let id = myArray2[0];
+					
+					this.tv_id = id;
+					
+					var config = {
+					  method: 'get',
+					  url: 'https://api.themoviedb.org/3/tv/'+this.tv_id+'?api_key=af74a3fa129f538a11a2385781f13edc&language=es-ES',
+					  headers: { }
+					};
+
+					axios(config)
+					.then(function (response) {
+					  console.log(JSON.stringify(response.data));
+					  app.tv  = response.data
+					})
+					.catch(function (error) {
+					  console.log(error);
+					});
+
+
+					// var config = {
+					//   method: 'get',
+					//   url: 'https://api.themoviedb.org/3/movie/popular?api_key=af74a3fa129f538a11a2385781f13edc&language=en-US',
+					//   headers: { }
+					// };
+
+					// axios(config)
+					// .then(function (response) {
+					//   //console.log(JSON.stringify(response.data));
+					//   app.movies = response.data.results;
+					//   console.log(movies)
+					  
+					// })
+					// .catch(function (error) {
+					//   console.log(error);
+					// });
+
+					// fetch('data/users.json')
+					//   .then((res) => res.json())
+					//   .then((json) => ( this.users = json ))
+					//   .catch((err) => ( console.log(err) ))
+				}
+			}).mount('#contenedor')
+		</script>
+	</body>
+</html>
